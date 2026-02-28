@@ -1,0 +1,70 @@
+<div class="bg-base-200 flex items-center justify-center p-4">
+  <div class="card w-full max-w-xl bg-base-100 shadow-xl border border-base-300">
+    <div class="card-body p-6">
+
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="bg-linear-to-tr from-primary to-secondary text-primary-content rounded-lg w-12 h-12 flex items-center justify-center shadow-md">
+              <span class="text-2xl font-bold">+</span>
+          </div>
+          <div>
+            <h2 class=" text-lg font-bold leading-tight">Nuevo Registro</h2>
+            <p class="text-xs opacity-60">Información académica</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs uppercase opacity-50">Materias</div>
+          <div class="text-lg font-bold text-primary">{{ studentForm.value.subjectIds?.length || 0 }}/3</div>
+        </div>
+      </div>
+
+      <progress class="progress progress-primary w-full h-1.5 mb-6" [value]="studentForm.value.subjectIds?.length || 0"
+        max="3"></progress>
+
+      <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <input formControlName="name" type="text" placeholder="Nombre"
+            class="input input-bordered focus:input-primary w-full bg-base-200" />
+          <input formControlName="surname" type="text" placeholder="Apellido"
+            class="input input-bordered focus:input-primary w-full bg-base-200" />
+        </div>
+
+        <div class="divider text-[10px] uppercase tracking-widest opacity-50">Selección</div>
+
+        <div class="flex flex-wrap gap-2 min-h-8">
+          @if (subjectsResource.isLoading()) {
+          <span class="loading loading-dots loading-sm text-primary"></span>
+          } @else if (subjectsResource.error()) {
+          <div class="flex items-center gap-2 text-error text-xs">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" />
+            </svg>
+            No se pudieron cargar las materias.
+            <button type="button" (click)="subjectsResource.reload()"
+              class="underline underline-offset-2 hover:text-error/80">Reintentar</button>
+          </div>
+          } @else {
+          @for (s of subjectsResource.value(); track s.id) {
+          <button type="button" (click)="onSubjectToggle(s.id)" class="btn btn-xs rounded-full transition-all"
+            [class.btn-primary]="studentForm.value.subjectIds?.includes(s.id)"
+            [class.bg-base-300]="!studentForm.value.subjectIds?.includes(s.id)">
+            {{ s.name }}
+          </button>
+          }
+          }
+        </div>
+
+        @if ((studentForm.value.subjectIds?.length || 0) > 3) {
+        <div class="alert alert-error py-2 text-xs">Máximo 3 materias permitidas.</div>
+        }
+
+        <button class="btn btn-primary btn-block shadow-md mt-4" [disabled]="studentForm.invalid">
+          Guardar Inscripción
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>

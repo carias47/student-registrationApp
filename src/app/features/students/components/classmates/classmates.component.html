@@ -1,0 +1,94 @@
+<section class="p-6 space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+        <div class="btn btn-primary btn-square btn-lg pointer-events-none">
+
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v13m0-13c-1.5-.8-3.3-1-4.5-1S4.5 5.2 3 6v13c1.5-.8 3.3-1 4.5-1s3 .2 4.5 1m0-13c1.5-.8 3.3-1 4.5-1S19.5 5.2 21 6v13c-1.5-.8-3.3-1-4.5-1s-3 .2-4.5 1" />
+            </svg>
+        </div>
+        <div>
+            <h2 class="text-2xl font-bold">Compañeros por Materia</h2>
+            <p class="text-xs opacity-60 uppercase tracking-widest">Red Académica</p>
+        </div>
+    </div>
+
+    <!-- Empty -->
+    @if (studentId() === null) {
+    <div class="card bg-base-200 border border-dashed">
+        <div class="card-body items-center text-center py-16">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 opacity-40 mb-2" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.3-4.3m1.8-4.2a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <p class="opacity-60 text-sm">Selecciona un perfil para ver sus compañeros de clase</p>
+        </div>
+    </div>
+    }
+
+    <!-- Loading -->
+    @else if (classmatesResource.isLoading()) {
+    <div class="flex justify-center py-16">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+    }
+
+    <!-- Content -->
+    @else {
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        @for (group of classmatesResource.value(); track group.subjectId) {
+        <div class="card bg-base-100 shadow-md border">
+            <div class="card-body">
+
+                <!-- Card header -->
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <!-- Bookmark icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3-7 3V5z" />
+                        </svg>
+                        <h3 class="font-semibold">{{ group.subjectName }}</h3>
+                    </div>
+                    <span class="badge badge-outline">ID {{ group.subjectId }}</span>
+                </div>
+
+                <!-- Students -->
+                <div class="space-y-2 mt-4">
+                    @for (name of group.classmateNames; track name) {
+                    <div class="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar placeholder">
+
+                                <span>👤</span>
+
+                            </div>
+                            <span class="text-sm">{{ name }}</span>
+                        </div>
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    </div>
+                    }
+                </div>
+
+                <!-- Footer -->
+                <div class="divider my-2"></div>
+                <div class="flex justify-between text-xs opacity-60">
+                    <span>Total Alumnos</span>
+                    <span class="font-semibold">
+                        {{ group.classmateNames.length }} / 10
+                    </span>
+                </div>
+            </div>
+        </div>
+        }
+
+    </div>
+    }
+
+</section>
